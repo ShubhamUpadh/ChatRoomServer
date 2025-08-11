@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-class UserName {
+public class UserName {
     private static Set<String> usernames = ConcurrentHashMap.newKeySet();
     private static final Logger logger = Logger.getLogger(UserName.class.getName());
 
