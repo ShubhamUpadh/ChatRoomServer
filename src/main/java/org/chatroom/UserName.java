@@ -23,5 +23,4 @@ public class UserName {
         logger.log(Level.INFO,"Removed user " + name);
         usernames.remove(name);
     }
-
 }

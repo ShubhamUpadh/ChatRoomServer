@@ -1,14 +1,13 @@
 package org.chatroom;
 
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UserNameHandler {
-    private Socket socket;
+    private final Socket socket;
     private PrintWriter out;
     private BufferedReader in;
     private final Logger logger = Logger.getLogger(UserNameHandler.class.getName());

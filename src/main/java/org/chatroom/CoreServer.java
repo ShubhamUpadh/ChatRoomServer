@@ -8,19 +8,25 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 
 class CoreServer {
-    private int port;
-    private final ServerSocket serverSocket = new ServerSocket(port);
+    private final ServerSocket serverSocket;
     private final Logger logger = Logger.getLogger(CoreServer.class.getName());
 
     public CoreServer(int port) throws IOException {
-        this.port = port;
+        this.serverSocket = new ServerSocket(port);
         System.out.println("Listening on port #" + port);
         logger.log(Level.INFO, "Started Server");
     }
 
-    public Socket createSocket() throws IOException {
+    public Socket createSocket(){
         logger.log(Level.INFO, "Created socket");
-        return serverSocket.accept();
+        try{
+            Socket returnSocket = serverSocket.accept();
+            logger.log(Level.INFO, "Accepted new client connection from " + returnSocket.getRemoteSocketAddress());
+            return returnSocket;
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Not able to create socket ", e);
+            throw new RuntimeException(e);
+        }
     }
 
     public String receiveMessage(Socket socket) throws IOException {
