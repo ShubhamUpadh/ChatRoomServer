@@ -29,17 +29,18 @@ public class UserNameHandler {
         }
     }
 
-    public void setUserName(){
+    public String setUserName(){
         // ask the user to create a userName
         while (!socket.isClosed()){
-            if (ableToSetUsername()){
+            String name = ableToSetUsername();
+            if (name != null){
                 logger.log(Level.INFO,"Username will be set");
-                break;
+                return name;
             }
         }
     }
 
-    private boolean ableToSetUsername(){
+    private String ableToSetUsername(){
 
         try {
             out.println("Set a username (< 9 characters)");
@@ -47,26 +48,26 @@ public class UserNameHandler {
 
             if (name == null){
                 logger.log(Level.WARNING,"Client disconnect while setting username");
-                return false;
+                return null;
             }
 
             if (name.length() > 8) {
                 out.println("Please enter a username of less than 9 characters");
-                return false;
+                return null;
             }
 
             if (UserName.doesUserExist(name)){
                 out.println("Username already exists " + name);
-                return false;
+                return null;
             }
             else {
                 out.println("Welcome to the server " + name);
                 UserName.addUser(name);
-                return true;
+                return name;
             }
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Not able to read username" + Arrays.toString(e.getStackTrace()));
-            return false;
+            return null;
         }
     }
 

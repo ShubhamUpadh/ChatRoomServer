@@ -20,9 +20,11 @@ public class Main {
         while (true) { // is this a good multithreading way
             Socket socket = coreServer.createSocket();
             new Thread(() -> {
-                UserNameHandler handler = new UserNameHandler(socket);
-                handler.setUserName();
+                UserNameHandler userNameHandler = new UserNameHandler(socket);
+                String userName = userNameHandler.setUserName();
                 // now start processing the user messages
+                MessageHandler messageHandler = new MessageHandler(socket, userName);
+
             }).start();
         }
     }

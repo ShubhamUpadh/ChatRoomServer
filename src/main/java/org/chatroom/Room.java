@@ -26,20 +26,20 @@ public class Room {
         memberSocketMap.put(name, socket);
     }
 
-    private String getRoomName(){
+    public String getRoomName(){
         return this.roomName;
     }
 
-    private void removeMember(String name){
+    public void removeMember(String name){
         logger.log(Level.INFO, "Removing member " + name);
         memberSocketMap.remove(name); // the socket shouldn't get deleted
     }
 
-    private boolean doesMemberExist(String name){
+    public boolean doesMemberExist(String name){
         return memberSocketMap.containsKey(name);
     }
 
-    private List<String> listAllMembers(){
+    public List<String> listAllMembers(){
         return memberSocketMap.keySet().stream().toList();
     }
 
