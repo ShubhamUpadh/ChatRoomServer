@@ -1,5 +1,44 @@
 package org.chatroom;
 
-public class RoomHandler {
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
+public class RoomHandler {
+    private ConcurrentHashMap<String, Room> rooms = new ConcurrentHashMap<>();
+    public String  joinRoom(String roomName, Socket socket, String userName){
+        if (rooms.containsKey(roomName)){
+            Room room = rooms.get(roomName);
+            room.addMember(userName, socket);
+            // add functionality for returning message to user that they have been added
+            return null;
+        }
+
+        Room room = new Room(roomName, userName, socket); // new room created
+        rooms.put(roomName, room);
+        return roomName;
+    }
+
+    public void leaveRoom(String userName, String currRoomName){
+        // if user not in room, return message
+        // else user will be removed from the map
+        if (!rooms.containsKey(currRoomName)){
+//            out.println("Not a valid format \n/join <RoomName>");
+            return;
+        }
+        Room room = rooms.get(currRoomName);
+        room.removeMember(userName);
+        if (room.listAllMembers().isEmpty()){
+            rooms.remove(userName);
+        }
+    }
+
+    public void listUsers(String currRoomName) {
+        if (!rooms.containsKey(currRoomName)){
+//            out.println("No room exists by the name " + currRoomName);
+            return;
+        }
+        Room room = rooms.get(currRoomName);
+        room.listAllMembers();
+    }
 }

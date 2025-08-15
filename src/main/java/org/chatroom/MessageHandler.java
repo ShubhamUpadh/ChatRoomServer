@@ -12,7 +12,8 @@ class MessageHandler {
     private PrintWriter out;
     private BufferedReader in;
     private Logger logger = Logger.getLogger(MessageHandler.class.getName());
-    private Room room = null;
+    private static RoomHandler roomHandler = new RoomHandler();
+    private String currRoomName;
 
     public MessageHandler(Socket socket, String userName){
         this.socket = socket;
@@ -81,8 +82,8 @@ class MessageHandler {
 
     private void validCommands() {
         out.print("These are the options :: ");
-        if (room == null) out.print("/join, ");
-        if (room != null) out.print("/leave, ");
+        if (currRoomName == null) out.print("/join, ");
+        if (currRoomName != null) out.print("/leave, ");
         out.println("/options, /list, /exit ");
     }
 
@@ -91,12 +92,35 @@ class MessageHandler {
             validCommands();
         }
         else if (messageSplit.getFirst().equalsIgnoreCase("/join")){
-            joinRoom();
+            if (messageSplit.size() != 2){
+                out.println("Not a valid format \n/join <RoomName>");
+                validCommands();
+            }
+            currRoomName = roomHandler.joinRoom(messageSplit.get(1), socket, userName);
+        } // leave, list, exit
+        else if (messageSplit.getFirst().equalsIgnoreCase("/leave")){
+            if (messageSplit.size() != 1 || currRoomName == null){
+                out.println("Not a valid format \n/leave");
+                validCommands();
+            }
+            roomHandler.leaveRoom(userName, currRoomName);
         }
-    }
 
-    private void joinRoom(){
-        // how do I make room accessible everywhere
+        else if (messageSplit.getFirst().equalsIgnoreCase("/list")){
+            if (messageSplit.size() != 1 || currRoomName == null){
+                out.println("Not a valid format \n/list");
+                validCommands();
+            }
+            roomHandler.listUsers(currRoomName);
+        }
+
+        else if (messageSplit.getFirst().equalsIgnoreCase("/exit")){
+            if (messageSplit.size() != 1 || currRoomName == null){
+                out.println("Invalid command ");
+                validCommands();
+            }
+            roomHandler.leaveRoom();
+        }
     }
 
     private boolean isAValidCommand(String command) {
@@ -106,14 +130,14 @@ class MessageHandler {
     }
 
     private boolean isValidMessage(String message) {
-        return room != null;
+        return currRoomName != null;
     }
 
     private void handleUserLogoff(){
 
-        if (room != null){
-            room.removeMember(userName);
-            logger.log(Level.INFO, "Removed " + userName + " from the room " + room.getRoomName());
+        if (currRoomName != null){
+            roomHandler.leaveRoom(currRoomName);
+            logger.log(Level.INFO, "Removed " + userName + " from the room " + currRoomName);
         }
 
         UserName.deleteUser(userName);

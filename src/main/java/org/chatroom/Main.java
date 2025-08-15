@@ -9,6 +9,8 @@ import java.util.logging.Logger;
 
 public class Main {
     Logger logger = Logger.getLogger(Main.class.getName());
+
+    private static Room room = new Room();
     public static void main(String[] args) throws IOException {
 
         Scanner sc = new Scanner(System.in);

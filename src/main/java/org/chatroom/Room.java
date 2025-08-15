@@ -21,7 +21,7 @@ public class Room {
         memberSocketMap.put(createdBy, socket);
     }
 // add, remove, doesUserExist, listAll
-    private void addMember(String name, Socket socket){
+    public void addMember(String name, Socket socket){
         logger.log(Level.INFO, "Adding member " + name);
         memberSocketMap.put(name, socket);
     }
