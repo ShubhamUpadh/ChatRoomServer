@@ -38,6 +38,7 @@ public class UserNameHandler {
                 return name;
             }
         }
+        return "";
     }
 
     private String ableToSetUsername(){

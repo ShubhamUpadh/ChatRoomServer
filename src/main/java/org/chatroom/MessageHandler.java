@@ -36,6 +36,7 @@ class MessageHandler {
 
     public void listenMessage(){
         while (!socket.isClosed()){
+            out.println("Hi " + userName + ", Please send your message");
             // I'm thinking of listening all the messages over here
             // parse the message, a connected user is being handled over here, hence
             try {
@@ -46,10 +47,18 @@ class MessageHandler {
                     return;
                 }
 
-                if (!isValidMessage(message)){
-                    out.println("Please join a room !!");
+                if (message.isEmpty()){
+                    logger.log(Level.INFO, "Empty message received");
+                    out.println("Empty message received");
                     continue;
                 }
+
+//                if (!isValidMessage(message)){
+//                    logger.log(Level.INFO, "Invalid message " + message);
+//                    out.println("Please join a room !!");
+//                    continue;
+//                }
+                logger.log(Level.INFO,"Calling parseMessage for the message -> ||" + message + "||");
                 parseMessage(message);
 
             } catch (IOException e) {
@@ -65,7 +74,9 @@ class MessageHandler {
         // without any / -> send this messsage to all
         // *username of another user* -> send dm to another user
 
-        List<String> messageSplit = List.of(message.split(" "));
+        List<String> messageSplit = List.of(message.split("\\s+"));
+        logger.log(Level.INFO,"Split message is -> ||" + messageSplit + "|| and the message size is "
+                + messageSplit.size() );
         if (messageSplit.isEmpty()) {
             out.println("Received empty message !!!");
         }
@@ -96,14 +107,14 @@ class MessageHandler {
                 out.println("Not a valid format \n/join <RoomName>");
                 validCommands();
             }
-            currRoomName = roomHandler.joinRoom(messageSplit.get(1), socket, userName);
+            else currRoomName = roomHandler.joinRoom(messageSplit.get(1), socket, userName);
         } // leave, list, exit
         else if (messageSplit.getFirst().equalsIgnoreCase("/leave")){
             if (messageSplit.size() != 1 || currRoomName == null){
                 out.println("Not a valid format \n/leave");
                 validCommands();
             }
-            roomHandler.leaveRoom(userName, currRoomName);
+            else roomHandler.leaveRoom(userName, currRoomName);
         }
 
         else if (messageSplit.getFirst().equalsIgnoreCase("/list")){
@@ -111,7 +122,7 @@ class MessageHandler {
                 out.println("Not a valid format \n/list");
                 validCommands();
             }
-            roomHandler.listUsers(currRoomName);
+            else roomHandler.listUsers(currRoomName);
         }
 
         else if (messageSplit.getFirst().equalsIgnoreCase("/exit")){
@@ -119,7 +130,7 @@ class MessageHandler {
                 out.println("Invalid command ");
                 validCommands();
             }
-            roomHandler.leaveRoom();
+            else roomHandler.leaveRoom(userName, currRoomName);
         }
     }
 
@@ -136,7 +147,7 @@ class MessageHandler {
     private void handleUserLogoff(){
 
         if (currRoomName != null){
-            roomHandler.leaveRoom(currRoomName);
+            roomHandler.leaveRoom(userName, currRoomName);
             logger.log(Level.INFO, "Removed " + userName + " from the room " + currRoomName);
         }
 
