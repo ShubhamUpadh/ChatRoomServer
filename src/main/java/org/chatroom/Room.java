@@ -1,8 +1,10 @@
 package org.chatroom;
 
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -13,12 +15,30 @@ public class Room {
     private final String createdBy;
     private ConcurrentHashMap<String, Socket> memberSocketMap = new ConcurrentHashMap<>();
     Logger logger = Logger.getLogger(Room.class.getName());
+    private PrintWriter out;
+    private BufferedReader in;
+
 
     public Room(String roomName, String createdBy, Socket socket){
         this.roomName = roomName;
         this.createdBy = createdBy;
         this.memberSocketMap.put(createdBy, socket);
         memberSocketMap.put(createdBy, socket);
+
+        try{
+            this.out = new PrintWriter(
+                    new OutputStreamWriter(socket.getOutputStream()), true
+            );
+            logger.log(Level.INFO,"Created output stream");
+
+            this.in = new BufferedReader(
+                    new InputStreamReader(socket.getInputStream())
+            );
+            logger.log(Level.INFO,"Created input stream");
+        }
+        catch (IOException e){
+            logger.log(Level.SEVERE, "Not able to create OutputStream ", e);
+        }
     }
 // add, remove, doesUserExist, listAll
     public void addMember(String name, Socket socket){
@@ -46,5 +66,13 @@ public class Room {
 
     public String getCreatedBy() {
         return createdBy;
+    }
+
+    public void messageOthers(String userName, String message) {
+        for (String member : memberSocketMap.keySet()){
+            if (Objects.equals(userName, member)) continue;
+            Socket memberSocket = memberSocketMap.get(member);
+            out.println(userName + " : " + message);
+        }
     }
 }

@@ -132,6 +132,14 @@ class MessageHandler {
             }
             else roomHandler.leaveRoom(userName, currRoomName);
         }
+        else if (messageSplit.getFirst().equalsIgnoreCase("/room")){
+            if (messageSplit.size() == 1 || currRoomName == null){
+                out.println("Invalid Command");
+                validCommands();
+            }
+            else roomHandler.messageRoom(userName, currRoomName,
+                    String.join(" ", messageSplit.subList(1, messageSplit.size())));
+        }
     }
 
     private boolean isAValidCommand(String command) {
