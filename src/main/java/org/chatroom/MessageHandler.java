@@ -92,6 +92,7 @@ class MessageHandler {
     }
 
     private void validCommands() {
+        logger.log(Level.INFO, "Invoked validCommands");
         out.print("These are the options :: ");
         if (currRoomName == null) out.print("/join, ");
         if (currRoomName != null) out.print("/leave, ");
@@ -122,7 +123,7 @@ class MessageHandler {
                 out.println("Not a valid format \n/list");
                 validCommands();
             }
-            else roomHandler.listUsers(currRoomName);
+            else out.println(roomHandler.listUsers(currRoomName));
         }
 
         else if (messageSplit.getFirst().equalsIgnoreCase("/exit")){
@@ -132,7 +133,7 @@ class MessageHandler {
             }
             else roomHandler.leaveRoom(userName, currRoomName);
         }
-        else if (messageSplit.getFirst().equalsIgnoreCase("/room")){
+        else if (messageSplit.getFirst().equalsIgnoreCase("/msg")){
             if (messageSplit.size() == 1 || currRoomName == null){
                 out.println("Invalid Command");
                 validCommands();
@@ -140,13 +141,24 @@ class MessageHandler {
             else roomHandler.messageRoom(userName, currRoomName,
                     String.join(" ", messageSplit.subList(1, messageSplit.size())));
         }
+        else if (messageSplit.getFirst().equalsIgnoreCase("/whoami")){
+            if (messageSplit.size() != 1){
+                out.println("Invalid Command");
+                validCommands();
+            }
+            else{
+                out.println("username is " + userName);
+                if (currRoomName != null) out.println("Roomname is " + currRoomName);
+                else out.println("Roomname is null");
+            }
+        }
     }
 
     private boolean isAValidCommand(String command) {
         return command.equals("/join") || command.equals("/leave")
                 || command.equals("/options") || command.equals("/list")
                 || command.equals("/exit") || command.equals("/help")
-                || command.equals("/room");
+                || command.equals("/msg") || command.equals("/whoAmI");
     }
 
     private boolean isValidMessage(String message) {

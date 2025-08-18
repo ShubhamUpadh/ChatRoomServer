@@ -2,6 +2,8 @@ package org.chatroom;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,13 +42,14 @@ public class RoomHandler {
         }
     }
 
-    public void listUsers(String currRoomName) {
+    public List<String> listUsers(String currRoomName) {
+        logger.log(Level.INFO, "Invoking listUsers");
         if (!rooms.containsKey(currRoomName)){
 //            out.println("No room exists by the name " + currRoomName);
-            return;
+            return new ArrayList<>();
         }
         Room room = rooms.get(currRoomName);
-        room.listAllMembers();
+        return room.listAllMembers();
     }
 
     public void messageRoom(String userName, String currRoomName, String message) {

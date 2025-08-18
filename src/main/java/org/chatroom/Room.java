@@ -60,6 +60,7 @@ public class Room {
     }
 
     public List<String> listAllMembers(){
+        logger.log(Level.INFO, "Invoked listAllMembers");
         return memberSocketMap.keySet().stream().toList();
     }
 
