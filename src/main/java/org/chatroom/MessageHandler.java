@@ -95,7 +95,7 @@ class MessageHandler {
         logger.log(Level.INFO, "Invoked validCommands");
         out.print("These are the options :: ");
         if (currRoomName == null) out.print("/join, ");
-        if (currRoomName != null) out.print("/leave, ");
+        if (currRoomName != null) out.print("/leave, /msg");
         out.println("/options, /list, /exit ");
     }
 
@@ -103,19 +103,26 @@ class MessageHandler {
         if (messageSplit.getFirst().equalsIgnoreCase("/options")){
             validCommands();
         }
-        else if (messageSplit.getFirst().equalsIgnoreCase("/join")){
+        else if (messageSplit.getFirst().equalsIgnoreCase("/join")){ // isko theek karna hai
             if (messageSplit.size() != 2){
                 out.println("Not a valid format \n/join <RoomName>");
                 validCommands();
             }
-            else currRoomName = roomHandler.joinRoom(messageSplit.get(1), socket, userName);
+            else {
+                logger.log(Level.INFO,"User selected /join");
+                currRoomName = roomHandler.joinRoom(messageSplit.get(1), socket, userName);
+                out.println("Adding userName : " + userName + " to room : " + currRoomName);
+            }
         } // leave, list, exit
         else if (messageSplit.getFirst().equalsIgnoreCase("/leave")){
             if (messageSplit.size() != 1 || currRoomName == null){
                 out.println("Not a valid format \n/leave");
                 validCommands();
             }
-            else roomHandler.leaveRoom(userName, currRoomName);
+            else {
+                roomHandler.leaveRoom(userName, currRoomName);
+                currRoomName = null;
+            }
         }
 
         else if (messageSplit.getFirst().equalsIgnoreCase("/list")){
@@ -142,6 +149,7 @@ class MessageHandler {
                     String.join(" ", messageSplit.subList(1, messageSplit.size())));
         }
         else if (messageSplit.getFirst().equalsIgnoreCase("/whoami")){
+            logger.log(Level.INFO, "Invoking /whoAmI");
             if (messageSplit.size() != 1){
                 out.println("Invalid Command");
                 validCommands();
@@ -154,11 +162,12 @@ class MessageHandler {
         }
     }
 
+    // all the commands should be in lowercase
     private boolean isAValidCommand(String command) {
         return command.equals("/join") || command.equals("/leave")
                 || command.equals("/options") || command.equals("/list")
                 || command.equals("/exit") || command.equals("/help")
-                || command.equals("/msg") || command.equals("/whoAmI");
+                || command.equals("/msg") || command.equals("/whoami");
     }
 
     private boolean isValidMessage(String message) {

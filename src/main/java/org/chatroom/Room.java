@@ -43,6 +43,7 @@ public class Room {
 // add, remove, doesUserExist, listAll
     public void addMember(String name, Socket socket){
         logger.log(Level.INFO, "Adding member " + name);
+//        out.println("Adding username : " + name + " to the room : " + roomName);
         memberSocketMap.put(name, socket);
     }
 

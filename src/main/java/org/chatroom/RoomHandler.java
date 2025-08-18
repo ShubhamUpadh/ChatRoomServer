@@ -20,7 +20,7 @@ public class RoomHandler {
             Room room = rooms.get(roomName);
             room.addMember(userName, socket);
             // add functionality for returning message to user that they have been added
-            return null;
+            return roomName;
         }
 
         Room room = new Room(roomName, userName, socket); // new room created
