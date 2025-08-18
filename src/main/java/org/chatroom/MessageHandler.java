@@ -145,7 +145,8 @@ class MessageHandler {
     private boolean isAValidCommand(String command) {
         return command.equals("/join") || command.equals("/leave")
                 || command.equals("/options") || command.equals("/list")
-                || command.equals("/exit") || command.equals("/help");
+                || command.equals("/exit") || command.equals("/help")
+                || command.equals("/room");
     }
 
     private boolean isValidMessage(String message) {

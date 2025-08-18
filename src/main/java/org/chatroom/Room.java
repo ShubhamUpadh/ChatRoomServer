@@ -69,10 +69,34 @@ public class Room {
     }
 
     public void messageOthers(String userName, String message) {
+        logger.log(Level.INFO,"messageOthers invoked");
         for (String member : memberSocketMap.keySet()){
             if (Objects.equals(userName, member)) continue;
             Socket memberSocket = memberSocketMap.get(member);
-            out.println(userName + " : " + message);
+            try {
+                this.out = new PrintWriter(
+                        new OutputStreamWriter(memberSocket.getOutputStream()), true
+                );
+                out.println(userName + " : " + message);
+            }
+            catch (IOException e){
+                logger.log(Level.INFO, "Not able to create outStream");
+            }
         }
+    }
+
+    public void messageSelf(String userName) {
+        logger.log(Level.INFO,"messageSelf invoked");
+        Socket memberSocket = memberSocketMap.get(userName);
+        try {
+            this.out = new PrintWriter(
+                    new OutputStreamWriter(memberSocket.getOutputStream()), true
+            );
+            out.println("No other user in the room :(");
+        }
+        catch (IOException e){
+            logger.log(Level.INFO, "Not able to create outStream");
+        }
+        out.println();
     }
 }
