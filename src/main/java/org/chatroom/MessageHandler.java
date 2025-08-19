@@ -41,28 +41,20 @@ class MessageHandler {
             // parse the message, a connected user is being handled over here, hence
             try {
                 String message = in.readLine();
-
                 if (message == null){
                     handleUserLogoff();
                     return;
                 }
-
                 if (message.isEmpty()){
                     logger.log(Level.INFO, "Empty message received");
                     out.println("Empty message received");
                     continue;
                 }
-
-//                if (!isValidMessage(message)){
-//                    logger.log(Level.INFO, "Invalid message " + message);
-//                    out.println("Please join a room !!");
-//                    continue;
-//                }
                 logger.log(Level.INFO,"Calling parseMessage for the message -> ||" + message + "||");
                 parseMessage(message);
 
             } catch (IOException e) {
-                logger.log(Level.SEVERE, "e");
+                logger.log(Level.SEVERE, e.getMessage());
             }
         }
     }
@@ -95,7 +87,7 @@ class MessageHandler {
         logger.log(Level.INFO, "Invoked validCommands");
         out.print("These are the options :: ");
         if (currRoomName == null) out.print("/join, ");
-        if (currRoomName != null) out.print("/leave, /msg");
+        if (currRoomName != null) out.print("/leave, /msg ");
         out.println("/options, /list, /exit ");
     }
 
@@ -107,6 +99,9 @@ class MessageHandler {
             if (messageSplit.size() != 2){
                 out.println("Not a valid format \n/join <RoomName>");
                 validCommands();
+            }
+            else if (currRoomName != null){
+                out.println("Please leave the currentRoom " + currRoomName + " to join another room");
             }
             else {
                 logger.log(Level.INFO,"User selected /join");
